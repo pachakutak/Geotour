@@ -4,15 +4,15 @@ tg.expand(); // Разворачивает WebView на весь экран
 const user = tg.initDataUnsafe?.user;
 
 if (user) {
+  // Показываем основной контент
   document.getElementById('username').textContent = user.first_name;
-  console.log("Пользователь:", user);
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('error').style.display = 'none';
 
-  // 👇 Отправляем initData на backend
-  fetch("https://pachakutak.github.io/Geotour/auth", {
+  // Авторизация
+  fetch("http://localhost:8000/auth", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ initData: tg.initData })
   })
     .then(res => res.json())
@@ -24,5 +24,8 @@ if (user) {
     });
 
 } else {
-  console.log("Нет данных о пользователе");
+  // Показываем заглушку
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('error').style.display = 'block';
+  console.warn("Приложение запущено вне Telegram");
 }
