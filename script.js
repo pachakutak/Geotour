@@ -8,7 +8,7 @@ if (user) {
   console.log("Пользователь:", user);
 
   // 👇 Отправляем initData на backend
-  fetch("http://localhost:8000/auth", {
+  fetch("https://pachakutak.github.io/Geotour/auth", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
