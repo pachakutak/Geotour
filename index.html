@@ -15,22 +15,64 @@
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+  <style> #map { width:100%; height:100vh; } </style>
 </head>
 <body>
-  <div id="app">
-    <h1>Привет, <span id="username">гость</span>!</h1>
-    <p>Меняю текст для проверки!</p>
-  </div>
+<div id="map"></div>
+  <script src="/static/hexgrid.js"></script>
+  <script>
+    // инициализация карты
+    const map = L.map('map').fitWorld();
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
 
-  <div id="error" style="display: none; color: red; text-align: center; margin-top: 50px;">
-    <h2>⚠ Это приложение работает только внутри Telegram</h2>
-    <p>Пожалуйста, откройте Web App через Telegram-бота.</p>
-  </div>
+    // получить уже открытые гексагоны
+    let opened = [];
+    fetch('/user_hexes')
+      .then(r => r.json())
+      .then(data => opened = data);
 
-  <div id="map" style="height: 80vh;"></div>
+    // инициализируем слой с гексагонами
+    const hexLayer = L.layerGroup().addTo(map);
 
+    function drawHexGrid() {
+      hexLayer.clearLayers();
+      const bounds = map.getBounds();
+      // hexgrid.js содержит функцию generateHexGrid(bounds, radius)
+      const hexes = generateHexGrid(bounds, 100);
+      hexes.forEach(h => {
+        const isOpened = opened.some(o =>
+          Math.abs(o.lat - h.center.lat)<1e-6 && Math.abs(o.lng - h.center.lng)<1e-6);
+        L.polygon(h.points, {
+          opacity: isOpened ? 0 : 0.8,
+          color: '#000000',
+        }).addTo(hexLayer).hexCenter = h.center;
+      });
+    }
 
-  <script src="script.js"></script>
+    map.on('moveend zoomend', drawHexGrid);
+    map.locate({setView: true, watch: true});
+
+    map.on('locationfound', e => {
+      // найдём гексагон, в который вошли
+      hexLayer.eachLayer(layer => {
+        if (layer.getBounds().contains(e.latlng) && layer.options.opacity > 0.01) {
+          const {lat,lng} = layer.hexCenter;
+          // сообщаем бэкенду
+          fetch('/hex_toggle', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({lat,lng})
+          });
+          layer.setStyle({opacity: 0});
+        }
+      });
+    });
+
+    // первый раз отрисуем
+    drawHexGrid();
+<script src="script.js"></script>
+  </script>
 </body>
 </html>
