@@ -6,17 +6,30 @@
   <title>Карта Telegram</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+	
+  <!-- Leaflet CSS -->
+  <link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 </head>
 <body>
   <div id="app">
     <h1>Привет, <span id="username">гость</span>!</h1>
-    <p>Добро пожаловать в карту-приключение!</p>
+    <p>Меняю текст для проверки!</p>
   </div>
 
   <div id="error" style="display: none; color: red; text-align: center; margin-top: 50px;">
     <h2>⚠ Это приложение работает только внутри Telegram</h2>
     <p>Пожалуйста, откройте Web App через Telegram-бота.</p>
   </div>
+
+  <div id="map" style="height: 80vh;"></div>
+
 
   <script src="script.js"></script>
 </body>
