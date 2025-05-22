@@ -9,6 +9,20 @@ if (user) {
   document.getElementById('app').style.display = 'block';
   document.getElementById('error').style.display = 'none';
 
+  // Показываем карту после приветствия
+  const map = L.map("map", {
+    crs: L.CRS.Simple, // обычная картинка, не карта
+    minZoom: -1
+  });
+
+  // Размер карты — подгони под свою картинку
+  const bounds = [[0, 0], [1000, 1000]];
+
+  // Заменить на свою картинку (map.png должна лежать рядом с index.html)
+  const image = L.imageOverlay("map.png", bounds).addTo(map);
+
+  map.fitBounds(bounds);
+
   // Авторизация
   fetch("https://pachakutak.github.io/Geotour/auth", {
     method: "POST",
