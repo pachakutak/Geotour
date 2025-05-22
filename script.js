@@ -10,7 +10,7 @@ if (user) {
   document.getElementById('error').style.display = 'none';
 
   // Авторизация
-  fetch("http://localhost:8000/auth", {
+  fetch("https://pachakutak.github.io/Geotour/auth", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ initData: tg.initData })
